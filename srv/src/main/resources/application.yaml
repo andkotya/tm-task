@@ -1,0 +1,20 @@
+# Конфигурация для SAP CAP Java
+cds:
+  datasource:
+    model:
+      - db/schema.cds
+    db:
+      kind: sql
+      credentials:
+        url: jdbc:h2:mem:transportdb
+        username: sa
+        password: ""
+        driver: org.h2.Driver
+
+  server:
+    port: 8080
+    welcomeFile: /index.html
+
+  deploy:
+    target: cf
+    service: transport-service
