@@ -1,46 +1,45 @@
 package com.test.transport.service;
 
-import com.sap.cds.services.cds.CdsService;
 import com.sap.cds.services.handler.EventHandler;
-import com.sap.cds.services.handler.annotations.On;
 import com.sap.cds.services.handler.annotations.ServiceName;
-import com.test.transport.model.TransportationOrder;
-import com.test.transport.model.TransportationOrderItem;
-import com.sap.cds.services.handler.annotations.Before;
+import com.sap.cds.services.handler.annotations.On;
+import com.sap.cds.services.EventContext;
+import com.sap.cds.services.Service;
 
-@ServiceName("TransportationService")
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
+@ServiceName("com.test.transport.TransportationService")
 public class TransportationOrderHandler implements EventHandler {
 
-    @Before(event = CdsService.EVENT_READ, entity = "TransportationOrder")
-    public void beforeReadTransportationOrder(CdsService.ReadContext context) {
-        context.setParameter("$autoexpand", "items");
-    }
+    @On(event = "READ", entity = "com.test.transport.TransportationOrder")
+    public void onRead(EventContext context, Service service) {
+        List<Map<String, Object>> orders = (List<Map<String, Object>>) context.get("result");
 
-    @On(entity = "TransportationService.calculateTotal")
-    public void calculateTotalWeightOnRead(CdsService.ReadContext context) {
-        Object result = context.getResult();
+        if (orders == null) {
+            return;
+        }
 
-        if (result instanceof List) {
-            ((List<TransportationOrder>) result).forEach(this::calculateOrderTotal);
-        } else if (result instanceof TransportationOrder) {
-            calculateOrderTotal((TransportationOrder) result);
+        for (Map<String, Object> order : orders) {
+            List<Map<String, Object>> items = (List<Map<String, Object>>) order.get("items");
+
+            if (items == null) {
+                continue;
+            }
+
+            BigDecimal totalWeight = BigDecimal.ZERO;
+
+            for (Map<String, Object> item : items) {
+                Integer quantity = (Integer) item.get("quantity");
+                BigDecimal weight = (BigDecimal) item.get("weight");
+
+                if (quantity != null && weight != null) {
+                    totalWeight = totalWeight.add(weight.multiply(BigDecimal.valueOf(quantity)));
+                }
+            }
+
+            order.put("totalWeight", totalWeight);
         }
     }
-
-    @On(entity = "TransportationService.editTransportationOrderItem")
-    public void onEditItem(CdsUpdateEventContext context) {
-        String itemId = (String) context.getParameter("itemID");
-        Integer quantity = (Integer) context.getParameter("quantity");
-        BigDecimal weight = (BigDecimal) context.getParameter("weight");
-
-        TransportationOrderItem item = TransportationOrderItem.findById(itemId)
-                .orElseThrow(() -> new IllegalStateException("Item not found"));
-
-        if (quantity != null) item.setQuantity(quantity);
-        if (weight != null) item.setWeight(weight);
-
-        context.setResult(item);
-        System.out.println("Updated item: " + itemId);
-    }
 }
-
