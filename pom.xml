@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.test.transport</groupId>
@@ -13,42 +10,12 @@
 
 
 	<properties>
-		<cds.services.version>3.9.0</cds.services.version> <!-- или 3.9.0 если нужно -->
-		<h2.version>2.2.224</h2.version> <!-- обновленная версия H2 -->
+		<cds.services.version>3.9.0</cds.services.version>
+		<h2.version>2.2.224</h2.version>
 		<javax.persistence.version>2.2</javax.persistence.version>
 		<slf4j.version>2.0.9</slf4j.version>
+		<spring-boot.version>3.2.0</spring-boot.version>
 	</properties>
-
-	<repositories>
-		<repository>
-			<id>central</id>
-			<name>Central Repository</name>
-			<url>https://repo.maven.apache.org/maven2</url>
-		</repository>
-		<repository>
-			<id>sap-releases</id>
-			<name>SAP Releases</name>
-			<url>https://maven.repository.sap.com/nexus/content/repositories/releases/</url>
-		</repository>
-		<repository>
-			<id>sap-public</id>
-			<name>SAP Public</name>
-			<url>https://repo.maven.apache.org/maven2</url>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>central</id>
-			<name>Central Repository</name>
-			<url>https://repo.maven.apache.org/maven2</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>sap-releases</id>
-			<name>SAP Releases</name>
-			<url>https://maven.repository.sap.com/nexus/content/repositories/releases/</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<dependencyManagement>
 		<dependencies>
@@ -60,29 +27,57 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.sap.cds</groupId>
-				<artifactId>cds-services-api</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.cds</groupId>
-				<artifactId>cds-services-runtime</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>com.h2database</groupId>
-				<artifactId>h2</artifactId>
-				<version>2.1.214</version>
-				<scope>runtime</scope>
-			</dependency>
-
-			<!-- JPA for entity handling -->
-			<dependency>
-				<groupId>javax.persistence</groupId>
-				<artifactId>javax.persistence-api</artifactId>
-				<version>2.2</version>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
+	<dependencies>
+		<!-- SAP CDS -->
+		<dependency>
+			<groupId>com.sap.cds</groupId>
+			<artifactId>cds-services-api</artifactId>
+		</dependency>
+
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- Database -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+			<version>${javax.persistence.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sap.cds</groupId>
+			<artifactId>cds-starter-cloudfoundry</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+
+	</dependencies>
 	<build>
 		<sourceDirectory>srv/src/main/java</sourceDirectory>
 		<resources>
@@ -124,6 +119,11 @@
 						</manifest>
 					</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.2.0</version> <!-- Используйте ту же версию, что и Spring Boot -->
 			</plugin>
 		</plugins>
 	</build>
