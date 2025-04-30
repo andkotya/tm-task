@@ -1,4 +1,6 @@
 cds:
+  watch:
+    enabled: true
   security:
     authentication: none
     mock:
@@ -22,18 +24,6 @@ cds:
   deploy:
     target: cf
     service: transport-service
-
-spring:
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-  profiles:
-    active: dev
-  datasource:
-    hikari:
-      maximum-pool-size: 10
-  jpa:
-    show-sql: true
-    hibernate.ddl-auto: validate
 
 management:
   endpoints.web.exposure.include: health,info

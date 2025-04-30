@@ -1,12 +1,7 @@
 using com.test.transport as transport from '../srv/service';
 
 annotate transport.TransportationOrder with @(
-Capabilities: {
-      Insertable: true,
-      Editable: true,
-      Updatable: true,
-      Deletable: true
-    },
+
   UI: {
   SelectionFields: [displayId, description],
     LineItem: [
@@ -35,7 +30,8 @@ Capabilities: {
       },
       Description: {
         $Type: 'UI.DataField',
-        Value: description
+        Value: description,
+        Label: 'Description'
       }
     },
 
@@ -68,8 +64,7 @@ Capabilities: {
         {
           $Type: 'UI.DataField',
           Value: totalWeight,
-          Label: 'Total Weight',
-          @Common.Text: {$Path: 'totalWeight', format: '{0} kg'}
+          Label: 'Total Weight'
         },
          {
           $Type: 'UI.DataFieldForAction',
@@ -124,3 +119,4 @@ Capabilities: {
     DraftActivationAction: true
   }
 );
+
